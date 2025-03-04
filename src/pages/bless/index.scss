@@ -1,0 +1,264 @@
+// pages/bless/index.scss
+$primary-color: #2f5aff;
+$secondary-color: #6c8eff;
+$bg-color: #f8faff;
+$text-primary: #1a2a5c;
+$border-radius: 16rpx;
+$shadow-base: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+
+// 容器结构 (独立定义不依赖继承)
+.bless-container {
+  padding: 32rpx;
+  min-height: 100vh;
+  background: $bg-color;
+  display: flex;
+  flex-direction: column;
+  gap: 48rpx;
+}
+
+// 输入区域
+.scenario-section {
+  .input-grid {
+    display: grid;
+    gap: 32rpx;
+    grid-template-columns: repeat(auto-fit, minmax(280rpx, 1fr));
+  }
+}
+
+// 输入组样式 (独立实现)
+.input-group {
+  background: white;
+  border-radius: $border-radius;
+  padding: 32rpx;
+  box-shadow: $shadow-base;
+  transition: all 0.2s ease;
+  position: relative;
+
+  .input-label {
+    position: absolute;
+    left: 32rpx;
+    top: 24rpx;
+    font-size: 28rpx;
+    color: rgba($text-primary, 0.6);
+    transition: all 0.2s ease;
+  }
+
+  .input-field {
+    width: 100%;
+    height: 88rpx;
+    padding-top: 40rpx;
+    font-size: 32rpx;
+    background: transparent;
+    border-bottom: 2rpx solid rgba($primary-color, 0.1);
+
+    &:focus {
+      border-color: $primary-color;
+
+      & + .input-label {
+        transform: translateY(-12rpx) scale(0.85);
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+// 结果区域
+.result-section {
+  flex: 1;
+  background: white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-base;
+
+  .result-area {
+    width: 100%;
+    height: 100%;
+    min-height: 150rpx;
+    padding: 32rpx;
+    font-size: 30rpx;
+    line-height: 1.6;
+
+    &:empty::before {
+      content: "等待生成祝福语...";
+      color: rgba($text-primary, 0.4);
+    }
+  }
+}
+
+// 操作栏
+$primary: #2f5aff;
+$secondary: #6c8eff;
+$surface: #ffffff;
+$success: #20c997;
+$error: #ff6b6b;
+$transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+.action-bar {
+  display: grid;
+  gap: 24rpx;
+  padding: 32rpx 0;
+  background: linear-gradient(
+    180deg,
+    rgba($surface, 0) 0%,
+    rgba($surface, 0.9) 20%
+  );
+  backdrop-filter: blur(8px);
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+
+  // 生成按钮
+  .generate-btn {
+    height: 96rpx;
+    border-radius: 48rpx;
+    background: linear-gradient(135deg, $primary, $secondary);
+    color: $surface;
+    font-size: 32rpx;
+    font-weight: 500;
+    box-shadow: 0 4rpx 16rpx rgba($primary, 0.2),
+      0 8rpx 32rpx rgba($primary, 0.1);
+    transition: transform $transition, box-shadow $transition;
+
+    &[disabled] {
+      background: rgba($primary, 0.6);
+      opacity: 1;
+    }
+
+    &:active:not([disabled]) {
+      transform: scale(0.98);
+      box-shadow: 0 2rpx 8rpx rgba($primary, 0.2),
+        0 4rpx 16rpx rgba($primary, 0.1);
+    }
+  }
+
+  // 发送按钮组
+  .send-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24rpx;
+    margin-top: 16rpx;
+
+    .send-btn {
+      height: 72rpx;
+      border-radius: 36rpx;
+      font-size: 28rpx;
+      position: relative;
+      overflow: hidden;
+      transition: background-color $transition, border-color $transition;
+
+      // 基础边框动画
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border: 2rpx solid;
+        border-radius: inherit;
+        opacity: 0.15;
+        transition: opacity $transition;
+      }
+
+      // 短信样式
+      &.sms {
+        background: rgba($primary, 0.08);
+        color: $primary;
+
+        &::before {
+          border-color: $primary;
+        }
+
+        &:active {
+          background: rgba($primary, 0.12);
+        }
+      }
+
+      // 邮件样式
+      &.email {
+        background: rgba($error, 0.08);
+        color: $error;
+
+        &::before {
+          border-color: $error;
+        }
+
+        &:active {
+          background: rgba($error, 0.12);
+        }
+      }
+
+      // 加载状态
+      &[disabled] {
+        position: relative;
+        overflow: hidden;
+
+        &::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            110deg,
+            rgba($surface, 0) 40%,
+            rgba($surface, 0.3) 50%,
+            rgba($surface, 0) 60%
+          );
+          animation: shimmer 2s infinite;
+        }
+      }
+    }
+  }
+}
+
+// 加载动画
+@keyframes shimmer {
+  to {
+    background-position-x: 200%;
+  }
+}
+
+// 生成按钮加载状态
+.generating {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 32rpx;
+    width: 32rpx;
+    height: 32rpx;
+    border: 3rpx solid rgba($surface, 0.3);
+    border-top-color: $surface;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+// 加载动画
+@keyframes shimmer {
+  to {
+    background-position-x: 200%;
+  }
+}
+
+.generating {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      110deg,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0) 60%
+    );
+    animation: shimmer 2s infinite;
+  }
+}

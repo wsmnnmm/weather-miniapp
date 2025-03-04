@@ -1,0 +1,80 @@
+// 变量定义
+$primary-color: #2f5aff;
+$secondary-color: #6c8eff;
+$bg-color: #f8faff;
+
+.container {
+  padding: 32rpx;
+  min-height: 100vh;
+  background: $bg-color;
+
+  .title {
+    font-size: 36rpx;
+    color: #1a2a5c;
+    font-weight: 600;
+    margin-bottom: 48rpx;
+    text-align: center;
+    position: relative;
+
+    &::after {
+      content: "";
+      display: block;
+      width: 48rpx;
+      height: 4rpx;
+      background: $primary-color;
+      margin: 16rpx auto 0;
+      border-radius: 2rpx;
+    }
+  }
+}
+
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24rpx;
+  margin-bottom: 64rpx;
+
+  .scenario-item {
+    background: white;
+    border-radius: 16rpx;
+    padding: 32rpx 16rpx;
+    text-align: center;
+    transition: all 0.2s ease;
+    border: 2rpx solid transparent;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+
+    .icon {
+      display: block;
+      font-size: 64rpx;
+      margin-bottom: 16rpx;
+      filter: drop-shadow(0 4rpx 8rpx rgba(47, 90, 255, 0.1));
+    }
+
+    &.active {
+      border-color: $primary-color;
+      transform: translateY(-8rpx);
+      box-shadow: 0 8rpx 24rpx rgba(47, 90, 255, 0.12);
+
+      .icon {
+        filter: drop-shadow(0 6rpx 12rpx rgba(47, 90, 255, 0.2));
+      }
+    }
+  }
+}
+
+.generate-btn {
+  background: linear-gradient(135deg, $primary-color, $secondary-color);
+  color: white !important;
+  border-radius: 999rpx;
+  font-size: 32rpx;
+  height: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6rpx 24rpx rgba(47, 90, 255, 0.2);
+  transition: opacity 0.2s;
+
+  &:active {
+    opacity: 0.85;
+  }
+}
