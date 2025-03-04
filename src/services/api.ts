@@ -24,6 +24,17 @@ export const weatherApi = {
     return res.data.data.forecast;
   },
 
+  // 生成祝福语
+  async getBlessings(type: string, params: Record<string, any>): Promise<any> {
+    const res = await Taro.request({
+      url: `${API_BASE}/api/blessing`,
+      method: "GET",
+      data: { type, ...params },
+      timeout: 3000000,
+    });
+    return res.data.data;
+  },
+
   // 发送短信提醒
   async sendAlertSMS(phone: string, message: string) {
     return Taro.request({

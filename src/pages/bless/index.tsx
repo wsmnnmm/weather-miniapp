@@ -15,17 +15,12 @@ export default function Bless() {
   const [blessText, setBlessText] = useState("");
   const [contact, setContact] = useState("");
   const [loading, setLoading] = useState(false);
-  console.log(router, "router");
 
-  const { data: currentWeather } = useRequest(
-    () => weatherApi.getCurrentWeather("440100"),
-    {
-      onSuccess: (data) => {
-        setParams({ temp: data?.temperature, condition: data?.weather });
-      },
-    }
-  );
-  console.log(currentWeather, "Weather");
+  useRequest(() => weatherApi.getCurrentWeather("440100"), {
+    onSuccess: (data) => {
+      setParams({ temp: data?.temperature, weather: data?.weather });
+    },
+  });
 
   // 初始化场景参数
   useEffect(() => {
@@ -33,9 +28,9 @@ export default function Bless() {
     setScenario(scenarioParam || "weather");
 
     const initParams = {
-      weather: { temp: "", condition: "" },
+      weather: { temp: "", weather: "" },
       birthday: { name: "", age: "", zodiac: "" },
-      mbti: { type: "", relationship: "" },
+      mbti: { mbtiType: "", relationship: "" },
     }[scenarioParam];
 
     setParams(initParams);
@@ -46,7 +41,7 @@ export default function Bless() {
     const fields = {
       weather: [
         { key: "temp", label: "当前温度", type: "number" },
-        { key: "condition", label: "天气状况" },
+        { key: "weather", label: "天气状况" },
       ],
       birthday: [
         { key: "name", label: "寿星姓名" },
@@ -54,7 +49,7 @@ export default function Bless() {
         { key: "zodiac", label: "生肖" },
       ],
       mbti: [
-        { key: "type", label: "MBTI类型" },
+        { key: "mbtiType", label: "MBTI类型" },
         { key: "relationship", label: "你们的关系" },
       ],
     }[scenario];
@@ -78,10 +73,19 @@ export default function Bless() {
 
     setLoading(true);
     // API调用逻辑
-    setTimeout(() => {
-      setBlessText("示例祝福语：愿温暖的阳光常伴你左右...");
+    try {
+      const blessings = await weatherApi.getBlessings(scenario, params);
+      console.log(blessings, "blessings");
+      setBlessText(blessings?.content ?? "无");
+    } catch (error) {
+      Taro.showToast({
+        title: `生成失败...`,
+        icon: "error",
+      });
+      console.error("Failed to generate blessings:", error);
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   };
 
   const sendBless = (type: "sms" | "email") => {

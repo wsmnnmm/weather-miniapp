@@ -33,7 +33,7 @@ export default {
     ],
   },
   window: {
-    navigationBarTitleText: "广州天气",
+    navigationBarTitleText: "祝福语",
     backgroundTextStyle: "light",
   },
   networkTimeout: {

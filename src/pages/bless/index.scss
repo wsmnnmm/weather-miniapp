@@ -68,18 +68,41 @@ $shadow-base: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
   background: white;
   border-radius: $border-radius;
   box-shadow: $shadow-base;
+  // 增加容器高度限制
+  max-height: 80vh; // 根据视口高度限制最大高度
+  display: flex; // 启用 flex 布局处理内部滚动
 
   .result-area {
+    flex: 1; // 充满容器可用空间
     width: 100%;
-    height: 100%;
-    min-height: 150rpx;
+    min-height: 250rpx;
     padding: 32rpx;
     font-size: 30rpx;
     line-height: 1.6;
+    overflow-y: auto; // 允许垂直滚动
+    -webkit-overflow-scrolling: touch; // 启用弹性滚动（iOS 优化）
+    word-break: break-word; // 强制换行处理长文本
+    white-space: pre-wrap; // 保留换行符同时自动换行
+
+    // 移动端优化滚动条
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba($text-primary, 0.2);
+      border-radius: 2px;
+    }
 
     &:empty::before {
       content: "等待生成祝福语...";
       color: rgba($text-primary, 0.4);
+      // 确保占位文本可见
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
   }
 }

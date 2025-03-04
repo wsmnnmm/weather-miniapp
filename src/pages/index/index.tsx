@@ -12,8 +12,6 @@ export default function Index() {
   ];
 
   const navigateToBless = () => {
-    console.log(scenario, "scenario");
-
     Taro.navigateTo({ url: `/pages/bless/index?scenario=${scenario}` });
   };
 
