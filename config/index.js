@@ -1,3 +1,6 @@
+// eslint-disable-next-line import/no-commonjs
+const webpack = require("webpack");
+// 引入 webpack 模块
 const config = {
   projectName: "weather-miniapp",
   date: "2025-2-28",
@@ -28,6 +31,21 @@ const config = {
     enable: false, // Webpack 持久化缓存配置，建议开启。默认配置请参考：https://docs.taro.zone/docs/config-detail#cache
   },
   mini: {
+    webpackChain(chain) {
+      // 正确初始化 DefinePlugin
+      chain
+        .plugin("define")
+        .use(webpack.DefinePlugin, [{}]) // 先定义插件
+        .tap((args) => {
+          // 合并原有环境变量（不要覆盖）
+          args[0] = args[0] || {};
+          args[0]["process.env"] = {
+            ...(args[0]["process.env"] || {}),
+            TARO_APP_API_BASE: JSON.stringify(process.env.TARO_APP_API_BASE),
+          };
+          return args;
+        });
+    },
     postcss: {
       pxtransform: {
         enable: true,

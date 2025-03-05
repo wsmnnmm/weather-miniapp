@@ -1,7 +1,20 @@
 import Taro from "@tarojs/taro";
 import { ForecastItem, WeatherData } from "./types";
 
-const API_BASE = "http://localhost:3000";
+type EnvType = "develop" | "trial" | "release";
+
+const accountInfo = Taro.getAccountInfoSync();
+
+const env = accountInfo.miniProgram.envVersion as EnvType;
+
+const API_BASE =
+  env === "develop"
+    ? "http://localhost:3000"
+    : env === "trial"
+    ? "https://api.taro-weather.com"
+    : env === "release"
+    ? "https://api.taro-weather.com"
+    : "";
 
 export const weatherApi = {
   // 获取实时天气

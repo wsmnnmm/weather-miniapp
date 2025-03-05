@@ -18,7 +18,12 @@
     "jsx": "react-jsx",
     "allowJs": true,
     "resolveJsonModule": true,
-    "typeRoots": ["node_modules/@types"]
+    "typeRoots": ["node_modules/@types"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@api/*": ["src/api/*"]
+    }
   },
   "include": ["./src", "src/types"],
   "compileOnSave": false

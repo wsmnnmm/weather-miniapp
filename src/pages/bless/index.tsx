@@ -69,13 +69,10 @@ export default function Bless() {
   };
 
   const generateBless = async () => {
-    console.log(params, "params");
-
     setLoading(true);
     // API调用逻辑
     try {
       const blessings = await weatherApi.getBlessings(scenario, params);
-      console.log(blessings, "blessings");
       setBlessText(blessings?.content ?? "无");
     } catch (error) {
       Taro.showToast({
