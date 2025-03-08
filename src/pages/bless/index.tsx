@@ -22,6 +22,76 @@ export default function Bless() {
     },
   });
 
+  const handleChunk = (chunk: { text: string }) => {
+    console.log(chunk, "chunk");
+
+    setBlessText((prev) => {
+      // 增量更新文本内容
+      const newText = prev + chunk?.text;
+      console.log(newText, "newText");
+
+      // 自动滚动到底部（如果有多行文本）
+      setTimeout(() => {
+        const query = Taro.createSelectorQuery();
+        query.select("#blessing-text").boundingClientRect();
+        query.selectViewport().scrollOffset();
+        query.exec((res) => {
+          if (res?.[1]) {
+            Taro.pageScrollTo({
+              scrollTop: res[1].scrollTop + 500,
+              duration: 300,
+            });
+          }
+        });
+      }, 50);
+
+      return newText;
+    });
+  };
+
+  const handleStreamEnd = () => {
+    Taro.showToast({
+      title: "生成完成",
+      icon: "success",
+    });
+  };
+
+  const handleError = (error: any) => {
+    Taro.showToast({
+      title: `生成失败: ${error.errMsg || "未知错误"}`,
+      icon: "none",
+    });
+  };
+
+  // 1. 验证事件监听器绑定状态
+  useEffect(() => {
+    console.log("绑定监听器前:", {
+      blessing_chunk: Taro.eventCenter,
+      blessing_end: Taro.eventCenter,
+    });
+
+    const realHandleChunk = (data) => {
+      console.log("实际处理函数被调用", data);
+      handleChunk(data);
+    };
+
+    Taro.eventCenter.on("blessing_chunk", realHandleChunk);
+    Taro.eventCenter.on("blessing_end", handleStreamEnd);
+    Taro.eventCenter.on("blessing_error", handleError);
+
+    console.log("绑定监听器后:", {
+      blessing_chunk: Taro.eventCenter,
+      blessing_end: Taro.eventCenter,
+    });
+
+    return () => {
+      console.log("清理监听器");
+      Taro.eventCenter.off("blessing_chunk", realHandleChunk);
+      Taro.eventCenter.off("blessing_end", handleStreamEnd);
+      Taro.eventCenter.off("blessing_error", handleError);
+    };
+  }, []);
+
   // 初始化场景参数
   useEffect(() => {
     const scenarioParam = router.params.scenario as ScenarioType;
@@ -70,18 +140,14 @@ export default function Bless() {
 
   const generateBless = async () => {
     setLoading(true);
-    // API调用逻辑
+    setBlessText(""); // 清空之前的内容
+
     try {
-      const blessings = await weatherApi.getBlessings(scenario, params);
-      setBlessText(blessings?.content ?? "无");
+      await weatherApi.getBlessingStream(scenario, params);
     } catch (error) {
-      Taro.showToast({
-        title: `生成失败...`,
-        icon: "error",
-      });
-      console.error("Failed to generate blessings:", error);
+      console.error("请求初始化失败:", error);
     } finally {
-      setLoading(false);
+      // 注意：这里不能设置loading=false，需等待end/error事件
     }
   };
 
