@@ -54,6 +54,7 @@ export default function Bless() {
       title: "生成完成",
       icon: "success",
     });
+    setLoading(false);
   };
 
   const handleError = (error: any) => {
@@ -61,6 +62,7 @@ export default function Bless() {
       title: `生成失败: ${error.errMsg || "未知错误"}`,
       icon: "none",
     });
+    setLoading(false);
   };
 
   // 1. 验证事件监听器绑定状态
@@ -203,9 +205,9 @@ export default function Bless() {
           {/* <Button className="send-btn sms" onClick={() => sendBless("sms")}>
             短信发送
           </Button> */}
-          <Button className="send-btn email" onClick={() => sendBless("email")}>
+          {/* <Button className="send-btn email" onClick={() => sendBless("email")}>
             邮件发送
-          </Button>
+          </Button> */}
         </View>
       </View>
     </View>

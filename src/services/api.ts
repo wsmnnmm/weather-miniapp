@@ -41,7 +41,6 @@ export const weatherApi = {
 
   // 生成祝福语
   async getBlessingStream(type: string, params: Record<string, any>) {
-    let buffer = "";
     return new Promise((resolve, reject) => {
       const task = Taro.request({
         url: `${API_BASE}/api/blessing`,
@@ -50,7 +49,7 @@ export const weatherApi = {
         enableChunked: true, // 关键参数：启用分块传输
         responseType: "arraybuffer", // 必须指定
         enableCache: false, // 安卓设备需要
-        timeout: 3000000,
+        timeout: 300000,
         success: (res) => {
           if (res.statusCode === 200) {
             Taro.eventCenter.trigger("blessing_end");
@@ -71,10 +70,30 @@ export const weatherApi = {
           const raw = new TextDecoder().decode(res.data);
           // 过滤心跳包
           if (raw.startsWith(":")) return;
-
-          const payload = raw.replace(/^data: /, "");
-          console.log("payload", payload, raw);
-          Taro.eventCenter.trigger("blessing_chunk", JSON.parse(payload));
+          
+          // 关键修改：按 data: 分割并清理空块
+          const chunks = raw
+            .split('data: ')              // 分割数据块
+            .map(chunk => chunk.trim())   // 清理空格
+            .filter(chunk => chunk !== ''); // 过滤空块
+          
+          chunks.forEach(chunk => {
+            
+            try {
+              const payload = JSON.parse(chunk);
+              console.log("处理块:", payload);
+              if (payload === '[DONE]') { 
+                // 结束标志处理
+                Taro.eventCenter.trigger("blessing_end");
+                task.abort(); // 终止请求
+              } else {
+                Taro.eventCenter.trigger("blessing_chunk", payload);
+              }
+            } catch (e) {
+              Taro.eventCenter.trigger("blessing_error", e);
+              console.error("解析失败:", e, "原始数据:", chunk);
+            }
+          });
         } catch (e) {
           Taro.eventCenter.trigger("blessing_error", e);
         }
