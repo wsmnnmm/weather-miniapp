@@ -24,6 +24,7 @@ const config = {
     type: "webpack5",
     prebundle: {
       enable: false,
+      include: ["text-encoding"], // 强制包含 text-encoding polyfill
       exclude: ["@nutui/nutui-react-taro", "@nutui/icons-react-taro"],
     },
   },

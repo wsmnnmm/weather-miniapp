@@ -67,6 +67,8 @@ export const weatherApi = {
         console.log("onChunkReceived了吗？", res);
 
         try {
+          //  const base64 = Taro.arrayBufferToBase64(res.data);
+          // const raw =  decodeURIComponent(escape(atob(base64)));
           const raw = new TextDecoder().decode(res.data);
           // 过滤心跳包
           if (raw.startsWith(":")) return;
