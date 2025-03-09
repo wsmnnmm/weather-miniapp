@@ -30,7 +30,7 @@ const path = require("path");
     // 强制指定使用当前 Node 实例
     const uploadResult = await ci.upload({
       project,
-      version: "1.0.1",
+      version: "1.0.2",
       desc: "祝福小程序更新",
       setting: {
         es6: true,

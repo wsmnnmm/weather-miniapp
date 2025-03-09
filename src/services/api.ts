@@ -11,9 +11,9 @@ const env = accountInfo.miniProgram.envVersion as EnvType;
 
 const API_BASE =
   env === "develop"
-    ? "http://localhost:3000"
+    ? "https://sad.wsmnnmm.online"
     : env === "trial"
-    ? "http://sad.wsmnnmm.online"
+    ? "https://sad.wsmnnmm.online"
     : env === "release"
     ? "https://api.taro-weather.com"
     : "";
@@ -70,19 +70,19 @@ export const weatherApi = {
           const raw = new TextDecoder().decode(res.data);
           // 过滤心跳包
           if (raw.startsWith(":")) return;
-          
+
           // 关键修改：按 data: 分割并清理空块
           const chunks = raw
-            .split('data: ')              // 分割数据块
-            .map(chunk => chunk.trim())   // 清理空格
-            .filter(chunk => chunk !== ''); // 过滤空块
-          
-          chunks.forEach(chunk => {
-            
+            .split("data: ") // 分割数据块
+            .map((chunk) => chunk.trim()) // 清理空格
+            .filter((chunk) => chunk !== ""); // 过滤空块
+          console.log(chunks, "chunks");
+
+          chunks.forEach((chunk) => {
             try {
               const payload = JSON.parse(chunk);
               console.log("处理块:", payload);
-              if (payload === '[DONE]') { 
+              if (payload?.text?.includes("[DONE]")) {
                 // 结束标志处理
                 Taro.eventCenter.trigger("blessing_end");
                 task.abort(); // 终止请求
@@ -90,12 +90,17 @@ export const weatherApi = {
                 Taro.eventCenter.trigger("blessing_chunk", payload);
               }
             } catch (e) {
-              Taro.eventCenter.trigger("blessing_error", e);
+              if (chunk.includes("[DONE]")) {
+                // 结束标志处理
+                Taro.eventCenter.trigger("blessing_end");
+                task.abort(); // 终止请求
+              }
               console.error("解析失败:", e, "原始数据:", chunk);
             }
           });
         } catch (e) {
-          Taro.eventCenter.trigger("blessing_error", e);
+          // Taro.eventCenter.trigger("blessing_error", e);
+          console.error("解析失败:", e, "原始数据:");
         }
       });
     });
