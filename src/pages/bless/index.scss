@@ -69,7 +69,7 @@ $shadow-base: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
   border-radius: $border-radius;
   box-shadow: $shadow-base;
   // 增加容器高度限制
-  max-height: 80vh; // 根据视口高度限制最大高度
+  max-height: 70vh; // 根据视口高度限制最大高度
   display: flex; // 启用 flex 布局处理内部滚动
   /* H5 适配 */
   @media all and (min-width: 768px) {

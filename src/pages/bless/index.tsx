@@ -2,7 +2,7 @@
 import { useRequest } from "ahooks";
 import { View, Text, Input, Textarea, Button } from "@tarojs/components";
 import Taro, { useRouter } from "@tarojs/taro";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./index.scss";
 import { weatherApi } from "../../services/api";
 
@@ -164,6 +164,40 @@ export default function Bless() {
     // 发送逻辑
   };
 
+  const textareaRef = useRef<any>(null);
+
+  // 统一复制功能
+  const handleCopy = () => {
+    if (!blessText) return;
+
+    // 通用复制逻辑
+    Taro.setClipboardData({
+      data: blessText,
+      success: () => {
+        Taro.showToast({ title: "复制成功", icon: "none" });
+
+        // 小程序端震动反馈
+        if (process.env.TARO_ENV !== "h5") {
+          Taro.vibrateShort();
+        }
+      },
+      fail: () => {
+        Taro.showToast({ title: "复制失败", icon: "none" });
+      },
+    });
+  };
+
+  // 文本区域点击处理
+  const handleTextareaClick = () => {
+    // H5 自动全选
+    if (process.env.TARO_ENV === "h5") {
+      const dom = textareaRef.current?.nativeElement;
+      if (dom) {
+        dom.select();
+      }
+    }
+  };
+
   return (
     <View className="bless-container">
       {/* 场景参数输入区 */}
@@ -182,13 +216,36 @@ export default function Bless() {
       {/* 生成结果区 */}
       <View className="result-section">
         <Textarea
+          ref={textareaRef}
           autoHeight
+          disabled
+          selectionStart={-1}
+          selectionEnd={-1}
           value={blessText}
+          onClick={handleTextareaClick}
           placeholder="生成的祝福语将出现在这里"
           className={`result-area ${loading ? "loading" : ""}`}
-          disabled={loading}
         />
       </View>
+      <View>
+        <Button
+          type="primary"
+          style={{
+            width: "6rem",
+            borderRadius: "1rem",
+            height: "1.5rem",
+            lineHeight: "1.5rem",
+            color: "#000000",
+            fontWeight: 400,
+          }}
+          plain
+          onClick={handleCopy}
+          disabled={!blessText}
+        >
+          {process.env.TARO_ENV === "h5" ? "一键复制" : "点击复制"}
+        </Button>
+      </View>
+
       {/* 操作按钮组 */}
       <View className="action-bar">
         <Button
@@ -202,6 +259,7 @@ export default function Bless() {
         >
           {loading ? "生成中..." : "生成祝福"}
         </Button>
+        {/* 跨平台复制按钮 */}
 
         <View className="send-buttons">
           {/* <Button className="send-btn sms" onClick={() => sendBless("sms")}>
