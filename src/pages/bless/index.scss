@@ -79,6 +79,10 @@ $shadow-base: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
   }
 
   .result-area {
+    .taro-textarea {
+      min-height: 100% !important;
+      line-height: 1.4;
+    }
     flex: 1; // 充满容器可用空间
     width: 100%;
     min-height: 250rpx;

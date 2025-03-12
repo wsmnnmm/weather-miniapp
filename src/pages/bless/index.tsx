@@ -170,7 +170,6 @@ export default function Bless() {
       <View className="scenario-section">
         <View className="input-grid">{renderInputs()}</View>
       </View>
-
       {/* 联系方式输入 */}
       <View className="contact-section">
         <Input
@@ -180,17 +179,16 @@ export default function Bless() {
           className="contact-input"
         />
       </View>
-
       {/* 生成结果区 */}
       <View className="result-section">
         <Textarea
+          autoHeight
           value={blessText}
           placeholder="生成的祝福语将出现在这里"
           className={`result-area ${loading ? "loading" : ""}`}
           disabled={loading}
         />
       </View>
-
       {/* 操作按钮组 */}
       <View className="action-bar">
         <Button
