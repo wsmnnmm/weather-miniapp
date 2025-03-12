@@ -1,9 +1,9 @@
 // pages/bless/index.tsx
+import { useRequest } from "ahooks";
 import { View, Text, Input, Textarea, Button } from "@tarojs/components";
 import Taro, { useRouter } from "@tarojs/taro";
 import { useState, useEffect } from "react";
 import "./index.scss";
-import { useRequest } from "ahooks";
 import { weatherApi } from "../../services/api";
 
 type ScenarioType = "weather" | "birthday" | "mbti";
@@ -195,7 +195,11 @@ export default function Bless() {
       <View className="action-bar">
         <Button
           className="generate-btn"
-          onClick={generateBless}
+          onClick={() => {
+            if (!loading) {
+              generateBless();
+            }
+          }}
           loading={loading}
         >
           {loading ? "生成中..." : "生成祝福"}

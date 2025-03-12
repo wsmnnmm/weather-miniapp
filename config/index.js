@@ -71,6 +71,17 @@ const config = {
   h5: {
     publicPath: "/",
     staticDirectory: "static",
+    devServer: {
+      proxy: {
+        "/api": {
+          target: "https://sad.wsmnnmm.online",
+          changeOrigin: true,
+        },
+      },
+    },
+    onProxyReqWs(proxyReq) {
+      proxyReq.setHeader("Connection", "keep-alive");
+    },
     postcss: {
       autoprefixer: {
         enable: true,
