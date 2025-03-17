@@ -4,8 +4,6 @@ import Taro from "@tarojs/taro";
 import { weatherApi } from "../../services/api";
 import { WeatherData, ForecastItem } from "../../services/types";
 import "./index.scss";
-import { Cell } from "@nutui/nutui-react-taro";
-import { IconFont } from "@nutui/icons-react-taro";
 
 // 在天气数据处使用
 
@@ -90,11 +88,9 @@ export default function WeatherPage() {
         </View>
         <View>
           <Text>湿度: {currentWeather?.humidity}%</Text>
-          <Cell>
-            <IconFont name="dongdong" style={{ marginRight: 10 }} />
-            <IconFont name="add" style={{ marginRight: 10 }} />
-            <IconFont name="minus" />
-          </Cell>
+          <View>
+            <iconfont name="tianqi1" size="30" />
+          </View>
         </View>
       </View>
 

@@ -19,12 +19,14 @@ export default {
       {
         pagePath: "pages/index/index",
         text: "首页",
-        // iconPath: 'assets/home.png',
-        // selectedIconPath: 'assets/home-active.png'
+        iconPath: "assets/home.png",
+        selectedIconPath: "assets/home-active.png",
       },
       {
         pagePath: "pages/weather/index",
         text: "天气",
+        iconPath: "assets/weather.png",
+        selectedIconPath: "assets/weather-active.png",
       },
       // {
       //   pagePath: "pages/bless/index",
